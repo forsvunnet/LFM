@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Lydfargemetoden</title>
+  <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <style type="text/css">
+  span { padding: 2px; }
+  .diftong { background-color: rgba(255,0,0,0.5); }
+  .konsonant { background-color: rgba(0,100,255,0.5); }
+  .vokal { background-color: rgba(255,255,0,0.5); }
+  .vokal.kort { background-color: rgba(0,200,0,0.5); }
+  .vokal.trykklett { background-color: rgba(255,100,0,0.5); }
+  body, html {
+    height: 100%;
+    background: #eee;
+    margin: 0; padding: 0;
+    overflow: hidden;
+  }
+  .output {
+    font-size: 1.5em;
+  }
+  .output-outer {
+    height: calc(100% - 25em);
+    width: 100%;
+  }
+  textarea, .output-outer {
+    padding: 1em 3em;
+  }
+  textarea {
+
+    width: 100%;
+    height: 23em;
+    border: 0; margin: 0;
+    resize: none;
+  }
+  textarea:focus {
+    outline: none;
+  }
+  </style>
+</head>
+<body>
+<div class="output-outer">
+<div class="output"></div>
+</div>
+<textarea>En lang tekst som et eksempel.
+Ei øy langt ute på sjøen.
+Dette er vanskelig!
+
+Han, hun, etc... flere tilfeller henvisning. Nok når til tør.
+
+En kam kom til å bli limet i taket.
+Det var lim til og med på veggene.
+
+Fjord gård gard dårlig karl barn. Korn.
+</textarea>
+<script type="text/javascript">
+  $( document ).ready( function() {
+    var gen_html = function( obj, text, attr_class ) {
+      if ( typeof obj !== 'object' ) {
+        return;
+      }
+      var keys = Object.keys(obj);
+      for (var i = keys.length - 1; i >= 0 ; i--) {
+        var sound = keys[i];
+        text = text.replace( new RegExp( obj[sound], 'g' ), '<span class="'+ attr_class +'">'+ sound +'</span>' );
+      }
+
+      return text;
+    };
+    var process_text = function( text ) {
+      var html = '';
+      var diftonger = {}, _diftonger = ['øy', 'ai', 'ei', 'au', 'Øy', 'Ai', 'Ei', 'Au'];
+      var konsonanter = {}, _konsonanter = 'QWRTPSDFGHJKLXCVBNMqwrtpsdfghjklxcvbnm'.split('');
+      var vokaler = {}, _vokaler = ['E', 'Y', 'U', 'I', 'O', 'Å', 'A', 'Ø', 'Æ', 'e', 'y', 'u', 'i', 'o', 'å', 'a', 'ø', 'æ'];
+      var korte_vokaler_ord = {
+        'an': '~~an',
+        'at': '~~at',
+        'bør': 'b~~ør',
+        'den': 'd~~en',
+        'et': '~~et',
+        'for': 'f~~or',
+        'han': 'h~~an',
+        'hen': 'h~~en',
+        'hos': 'h~~os',
+        'hun': 'h~~un',
+        'hvis': 'hv~~is',
+        'igjen': 'igj~~en',
+        'kan': 'k~~an',
+        'kun': 'k~~un',
+        'man': 'm~~an',
+        'men': 'm~~en',
+        'nok': 'n~~ok',
+        'når': 'n~~år',
+        'skal': 'sk~~al',
+        'spør': 'sp~~ør',
+        'til': 't~~il',
+        'tør': 't~~ør',
+        'vel': 'v~~el',
+        'vil': 'v~~il',
+      };
+      var sound, i;
+
+      // Diftonger / Kjærestepar
+      for ( i = 0; i < _diftonger.length; i++ ) {
+        diftonger[_diftonger[i]] = '!'+i;
+      }
+      // Korte vokaler
+      for ( i = 0; i < _vokaler.length; i++ ) {
+        vokaler['~~'+_vokaler[i]] = '~'+i;
+      }
+      // Tryklette vokaler
+      vokaler['~e'] = '~'+ _vokaler.length;
+      vokaler['~E'] = '~'+ _vokaler.length + 1;
+
+      // Vanlige vokaler
+      for ( i = 0; i < _vokaler.length; i++ ) {
+        vokaler[_vokaler[i]] = '~'+ ( _vokaler.length + 2 + i );
+      }
+
+      // Konsonanter
+      for ( i = 0; i < _konsonanter.length; i++ ) {
+        konsonanter[_konsonanter[i]] = '-'+i;
+      }
+
+      // Replace light vowels
+      text = text.replace( /(e|elig)([\s\.!,\)\(\]\[])/g, '~$1$2');
+      // Replace short vowels
+      text = text.replace( /([EYUIOÅAØÆeyuioåaøæ][qwrtpsdfghjklxcvbnm]{2})/g, '~~$1');
+      // Words that end with 'm' have short vowels (except i's)
+      text = text.replace( /([EYUOÅAØÆeyuoåaøæ])m([\s\.!,\)\(\]\[])/g, '~~$1m$2');
+
+      // Apply special rules
+      for ( i in korte_vokaler_ord ) {
+        korte_vokaler_ord[ i.charAt(0).toUpperCase() + i.substr(1) ] = korte_vokaler_ord[i].charAt(0).toUpperCase() + korte_vokaler_ord[i].substr(1);
+      }
+      for ( i in korte_vokaler_ord ) {
+        text = text.replace( new RegExp( '(\\s)'+ i, 'g' ), '$1'+ korte_vokaler_ord[i] );
+      }
+
+      text = text.replace( /~~([EYUIOÅAØÆeyuioåaøæ])(rd|rl|rn)/g, '$1$2');
+
+
+
+
+      // Replace sounds (turn letters into numbers)
+      for ( sound in diftonger ) {
+        text = text.replace( new RegExp( sound, 'g' ), diftonger[sound] );
+      }
+      for ( sound in vokaler ) {
+        text = text.replace( new RegExp( sound, 'g' ), vokaler[sound] );
+      }
+      for ( sound in konsonanter ) {
+        text = text.replace( new RegExp( sound, 'g' ), konsonanter[sound] );
+      }
+
+      // Generate the html
+      text = gen_html( diftonger, text, 'diftong' );
+      text = gen_html( vokaler, text, 'vokal' );
+      text = gen_html( konsonanter, text, 'konsonant' );
+
+      // Short vowels
+      text = text.replace( /">~~([a-zæøå])/ig, ' kort">$1' );
+      text = text.replace( /">~([Ee])/g, ' trykklett">$1' );
+
+      return text;
+    };
+
+
+
+    $('textarea').on( 'keyup', function() {
+      $('.output').html( process_text( $(this).val() ).replace( /\n/g, '<br>' ) );
+    } );
+    $('.output').html( process_text( $('textarea').val() ).replace( /\n/g, '<br>' ) );
+  } );
+</script>
+</body>
+</html>
