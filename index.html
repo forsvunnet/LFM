@@ -6,7 +6,7 @@
   <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
   <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   <style type="text/css">
-  span { colour: transparent; display: inline-block; }
+  span { colour: transparent; display: inline; }
   .diftong { background-color: rgba(255,0,0,0.5); }
   .konsonant { background-color: rgba(0,100,255,0.5); }
   .vokal { background-color: rgba(255,255,0,0.5); }
@@ -31,6 +31,16 @@
     background: -ms-linear-gradient(top,  #0005ad 0%,#3067ff 50%,#0a0096 100%); /* IE10+ */
     background: linear-gradient(to bottom,  #0005ad 0%,#3067ff 50%,#0a0096 100%); /* W3C */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0005ad', endColorstr='#0a0096',GradientType=0 ); /* IE6-9 */
+  }
+  .red-miscolour {
+    background: #0026ff; /* Old browsers */
+    background: -moz-linear-gradient(top,  #0026ff 0%, #ff0000 50%, #0026ff 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#0026ff), color-stop(50%,#ff0000), color-stop(100%,#0026ff)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #0026ff 0%,#ff0000 50%,#0026ff 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #0026ff 0%,#ff0000 50%,#0026ff 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #0026ff 0%,#ff0000 50%,#0026ff 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #0026ff 0%,#ff0000 50%,#0026ff 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0026ff', endColorstr='#0026ff',GradientType=0 ); /* IE6-9 */
   }
   body, html {
     height: 100%;
@@ -64,6 +74,7 @@
 </div>
 <textarea>
 
+Beskyttelse
 Jeg liker å bygge med lego.
 Tekno lego er best.
 
@@ -202,18 +213,25 @@ Det går også an å bruke programeringsverktøy for å få robter til å gjøre
       text = text.replace( /(er)([qwrtpsdfghjklxcvbnm])/gi, '~!$1$2' );
       console.log(text);
 
-      // Replace light vowels
-      text = text.replace( /(e|elig)([\s\.!,\)\(\]\[])/g, '~$1$2');
+      // Replace æi sounds jeg, meg etc...
+      text = text.replace( /([^Ll])eg/g, '$1~!!!e~!!!g');
       // Replace short vowels
       text = text.replace( /([EYUIOÅAØÆeyuioåaøæ][qwrtpsdfghjklxcvbnm]{2})/g, '~~$1');
       // Words that end with 'm' have short vowels (except i's)
       text = text.replace( /([EYUOÅAØÆeyuoåaøæ]|[^RrLl][Ii])m([\s\.!,\)\(\]\[])/g, '~~$1m$2');
       // D's in words that end with d should be colourless
       text = text.replace( /([EYUIOÅAØÆeyuioåaøæ])([rnl]?)d([\s\.!,\)\(\]\[])/g, '$1$2=d$3');
+      // Replace light vowels (tryklette e'er)
+      text = text.replace( /([^~])elige([\s\.!,\)\(\]\[])/g, '$1~elig~e$2');
+      text = text.replace( /~else([\s\.!,\)\(\]\[])/g, 'els~e$1');
+      text = text.replace( /([^~])ene([\s\.!,\)\(\]\[])/g, '$1~en~e$2');
+      text = text.replace( /([^~])(e|elig|en|er)([\s\.!,\)\(\]\[])/g, '$1~$2$3');
+      text = text.replace( /([\s\.!,\)\(\]\[])([Bb])(~~e|e)/g, '$1$2~e');
 
 
       // Words ending with rd, rl or rn should have long vowels
       text = text.replace( /~~([EYUIOÅAØÆeyuioåaøæ])(rd|rl|rn)/g, '$1$2');
+      console.log( text );
 
       // Replace sounds (turn letters into numbers)
       for ( sound in diftonger ) {
@@ -227,6 +245,8 @@ Det går også an å bruke programeringsverktøy for å få robter til å gjøre
       }
 
       // Generate the html
+      text = gen_html( konsonanter, text, 'red-miscolour', '~!!!');
+      text = gen_html( vokaler, text, 'red-miscolour', '~!!!' );
       text = gen_html( diftonger, text, 'diftong' );
       text = gen_html( vokaler, text, 'green-miscolour', '~!' );
       text = gen_html( vokaler, text, 'vokal' );
