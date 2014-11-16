@@ -6,12 +6,12 @@
   <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
   <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   <style type="text/css">
-  span {  }
-  .diftong { background-color: rgba(255,0,0,0.5); color: rgba(255,0,0,0.5);; }
-  .konsonant { background-color: rgba(0,100,255,0.5); color: rgba(0,100,255,0.5);; }
-  .vokal { background-color: rgba(255,255,0,0.5); color: rgba(255,255,0,0.5);; }
-  .vokal.kort { background-color: rgba(0,200,0,0.5); color: rgba(0,200,0,0.5);;}
-  .vokal.trykklett { background-color: rgba(255,100,0,0.5); color: rgba(255,100,0,0.5);; }
+  span { colour: transparent; display: inline-block; }
+  .diftong { background-color: rgba(255,0,0,0.5); }
+  .konsonant { background-color: rgba(0,100,255,0.5); }
+  .vokal { background-color: rgba(255,255,0,0.5); }
+  .vokal.kort { background-color: rgba(0,200,0,0.5); }
+  .vokal.trykklett { background-color: rgba(255,100,0,0.5); }
   .green-miscolour {
     background: #00ad1c; /* Old browsers */
     background: -moz-linear-gradient(top,  #00ad1c 0%, #fff830 50%, #0cbc00 100%); /* FF3.6+ */
@@ -45,6 +45,7 @@
     border: 0; margin: 0;
     padding: 1em;
     letter-spacing: 2px;
+    font-family: 'Courier new'
   }
   textarea {
     resize: none;
@@ -62,32 +63,14 @@
 <div class="output"></div>
 </div>
 <textarea>
-Kiste
-Kirke
-kirke
-tjern
 
-Alle unge men er munker og går i bukser.
-De det gjelder.
-Jod
-Brodd
-Jorden
-Sverd
+Jeg liker å bygge med lego.
+Tekno lego er best.
 
-Skjerf
-ski
-sky
-skeiv
-sjåfør
+Jeg kan bygge biler, fly,roboter og mye mer.
+Det går an å bruke fjernstyring, slik at bilene kan kjøre selv.
+Det går også an å bruke programeringsverktøy for å få robter til å gjøre det du sier den skal gjøre.
 
-Lim kom Bravo
-
-God Morgen
-Morgen, også selge, følge, fugl fugler
-
-Hjemme hjerte hvete
-
-Hagl
 </textarea>
 <script type="text/javascript">
   $( document ).ready( function() {
@@ -144,7 +127,7 @@ Hagl
         '([Tt])j': '~!!$2~!!j',
         '([Ss])j': '~!!$2~!!j',
         '([Ss])h': '~!!$2~!!h',
-        '([Ss])k': '~!!$2~!!k',
+        '([Ss])k(i|y|øy)': '~!!$2~!!k$3',
         '([Ss])kj': '~!!$2~!!k~!!j',
 
 
